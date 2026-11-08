@@ -1,0 +1,20 @@
+{
+  "name": "trasa",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Planer podrĂłĹĽy komunikacjÄ… miejskÄ… (mobile-first) na otwartych rozkĹ‚adach GTFS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "gtfs": "node scripts/fetch-gtfs.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "eruda": "^3.4.1",
+    "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4"
+  }
+}
