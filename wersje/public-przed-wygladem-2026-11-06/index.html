@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b5fd0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Trasa — planer podróży</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script>
+    // Na szerokim ekranie komputera otwórz podgląd w ramce telefonu (wyłącz: ?app=1)
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var wide = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+      if (wide && window.top === window && !q.has('app') && !q.has('embed')) location.replace('/dev');
+    })();
+  </script>
+</head>
+<body data-screen="home">
+<div id="app">
+  <div id="map"></div>
+
+  <!-- START -->
+  <section id="home" class="screen active map-screen">
+    <div class="home-top">
+      <header class="app-bar"><span class="app-title">trasa</span><button class="icon-btn" id="menuBtn" aria-label="Konto"></button></header>
+      <div class="city-tabs"><button class="city-tab on" id="cityBtn"><span class="ct-ic"></span><span id="cityName">…</span><span class="ct-arrow"></span></button></div>
+      <div class="home-fields">
+        <button class="hfield" id="hFrom"><span class="pin-dot from"></span><span class="ftxt placeholder">Skąd jedziesz?</span></button>
+        <button class="hfield" id="hTo"><span class="pin-dot to"></span><span class="ftxt placeholder">Dokąd jedziesz?</span></button>
+        <div class="home-chips"><button class="chip chip-soft" id="hTime"></button><span class="grow"></span><button class="chip chip-soft" id="hOpts"></button></div>
+      </div>
+    </div>
+    <button class="fab" id="locBtn" aria-label="Moja lokalizacja"></button>
+    <div class="sheet home-sheet" id="homeSheet">
+      <div class="sheet-grab"></div>
+      <div class="home-lists">
+        <div class="sheet-title">Ostatnie trasy</div>
+        <ul class="list" id="recentList"></ul>
+        <div class="home-hint" id="recentEmpty">Tu pojawią się wyszukane trasy.</div>
+        <div class="sec-title" id="nearbyTitle" hidden>Przystanki w pobliżu</div>
+        <ul class="list" id="nearbyList"></ul>
+        <div class="home-hint" id="homeHint"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROZKŁADY -->
+  <section id="lines" class="screen">
+    <header class="tab-head"><div class="app-bar"><span class="app-title">Rozkłady</span></div>
+      <div class="tab-search"><span class="ts-ic"></span><input id="linesInput" type="search" autocomplete="off" placeholder="Linia albo przystanek"></div></header>
+    <div class="scroll tab-scroll" id="linesBody"></div>
+  </section>
+
+  <!-- LINIA -->
+  <section id="line" class="screen">
+    <header class="stop-head" id="lineHead"></header>
+    <div class="scroll" id="lineBody"></div>
+  </section>
+
+  <!-- KONTO -->
+  <section id="account" class="screen">
+    <header class="tab-head"><div class="app-bar"><span class="app-title">Konto</span></div></header>
+    <div class="scroll tab-scroll" id="accountBody"></div>
+  </section>
+
+  <!-- LOGOWANIE -->
+  <section id="login" class="screen">
+    <div class="login-box">
+      <div class="boot-logo"></div>
+      <div class="login-title" id="loginTitle">Zaloguj się</div>
+      <div class="login-sub" id="loginSub"></div>
+      <label class="lbl">Adres serwera<input class="inp" id="lgServer" type="url" inputmode="url" autocomplete="off" placeholder="http://192.168.1.10:3400"></label>
+      <label class="lbl">Login<input class="inp" id="lgLogin" autocomplete="username" value="admin"></label>
+      <label class="lbl">Hasło<input class="inp" id="lgPass" type="password" autocomplete="current-password"></label>
+      <label class="lbl" id="lgPass2Wrap" hidden>Powtórz hasło<input class="inp" id="lgPass2" type="password" autocomplete="new-password"></label>
+      <div class="login-err" id="lgErr"></div>
+      <button class="btn primary block" id="lgOk">Zaloguj</button>
+    </div>
+  </section>
+
+  <!-- WYSZUKIWANIE POŁĄCZEŃ -->
+  <section id="plan" class="screen">
+    <header class="plan-head">
+      <div class="plan-row">
+        <button class="icon-btn on-brand" data-back aria-label="Wstecz"></button>
+        <div class="fields">
+          <button class="field" id="fromField"><span class="pin-dot from"></span><span class="ftxt placeholder">Skąd?</span></button>
+          <div class="field-sep"></div>
+          <button class="field" id="toField"><span class="pin-dot to"></span><span class="ftxt placeholder">Dokąd?</span></button>
+        </div>
+        <button class="icon-btn on-brand" id="swapBtn" aria-label="Zamień"></button>
+      </div>
+      <div class="plan-chips">
+        <button class="chip chip-brand" id="timeBtn"></button>
+        <button class="chip chip-brand" id="optsBtn"></button>
+      </div>
+    </header>
+    <div class="results scroll" id="results"></div>
+  </section>
+
+  <!-- WYBÓR MIEJSCA -->
+  <section id="pick" class="screen">
+    <header class="search-head">
+      <button class="icon-btn" data-back aria-label="Wstecz"></button>
+      <input id="pickInput" type="search" autocomplete="off" enterkeyhint="search" placeholder="Przystanek, adres, miejsce">
+      <button class="icon-btn" id="pickClear" aria-label="Wyczyść" hidden></button>
+    </header>
+    <div class="scroll" id="pickBody"></div>
+  </section>
+
+  <!-- WYBÓR NA MAPIE -->
+  <section id="mappick" class="screen map-screen">
+    <div class="top-float">
+      <button class="icon-btn float" data-back aria-label="Wstecz"></button>
+      <div class="float-label">Przesuń mapę, aby wskazać miejsce</div>
+    </div>
+    <div class="center-pin"></div>
+    <div class="sheet mappick-sheet">
+      <div class="mp-name" id="mpName">…</div>
+      <div class="mp-sub" id="mpSub"></div>
+      <button class="btn primary block" id="mpOk">Wybierz to miejsce</button>
+    </div>
+  </section>
+
+  <!-- SZCZEGÓŁY TRASY -->
+  <section id="route" class="screen map-screen">
+    <div class="top-float">
+      <button class="icon-btn float" data-back aria-label="Wstecz"></button>
+    </div>
+    <div class="sheet drag-sheet" id="routeSheet">
+      <div class="sheet-grab"></div>
+      <div class="scroll" id="routeBody"></div>
+    </div>
+  </section>
+
+  <!-- ODJAZDY Z PRZYSTANKU -->
+  <section id="stop" class="screen">
+    <header class="stop-head" id="stopHead"></header>
+    <div class="scroll" id="stopBody"></div>
+  </section>
+
+  <!-- KURS -->
+  <section id="trip" class="screen map-screen">
+    <div class="top-float">
+      <button class="icon-btn float" data-back aria-label="Wstecz"></button>
+    </div>
+    <div class="sheet drag-sheet" id="tripSheet">
+      <div class="sheet-grab"></div>
+      <div class="scroll" id="tripBody"></div>
+    </div>
+  </section>
+
+  <nav class="tabbar">
+    <button data-tab="home"><span class="tb-ic" data-ic="route"></span>Trasa</button>
+    <button data-tab="lines"><span class="tb-ic" data-ic="schedule"></span>Rozkłady</button>
+    <button data-tab="account"><span class="tb-ic" data-ic="person"></span>Konto</button>
+  </nav>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-back"></div>
+    <div class="modal-sheet" id="modalSheet"></div>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <div class="boot" id="boot"><div class="boot-logo"></div><div class="boot-msg" id="bootMsg">Ładowanie…</div></div>
+</div>
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script type="module" src="/js/debug.js"></script>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

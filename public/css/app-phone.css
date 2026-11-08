@@ -1,0 +1,204 @@
+/* Wygląd aplikacji na telefonie (Jak Dojadę na Androidzie), nałożony na app.css (wersja strony).
+   Wymiary z drzewa elementów (uiautomator) w dp — 1 dp = 1 px CSS; kolory z pikseli zrzutów (tryb ciemny).
+   Jasny motyw aplikacji nie był odczytywany: używa kolorów strony z tymi samymi wymiarami. */
+
+:root { --hdr-h: 54px; --bm-h: 73px; --tk-sep: #f6f6f6; }
+:root[data-theme="dark"] { --tk-sep: #191919; }
+
+/* ---------- nagłówek: logo / tytuł po lewej, 54 dp */
+.hdr.app-left .hdr-title { left: 16px; right: 60px; text-align: left; font-size: 20px; line-height: 26px; letter-spacing: -0.6px; }
+.hdr.app-left .hdr-title.brand-word { font-size: 22px; letter-spacing: -0.9px; display: flex; align-items: center; gap: 8px; }
+.hdr-title.brand-word .brand-mark { width: 22px; height: 22px; flex: none; display: flex; }
+.hdr-title.brand-word .brand-mark .ji { width: 22px; height: 22px; }
+.hdr.app-left .hdr-side:first-child:not(:has(button:not([hidden]))) { width: 0; }
+.hdr-btn[data-account] .ji { width: 22px; height: 22px; }
+.hdr-btn .ji { width: 18px; height: 18px; }
+#home.searching .hdr-title.brand-word { display: none; }
+
+/* ---------- formularz: pola 36 dp (aktywne 48), marginesy 15 dp */
+.sform { padding: 16px 15px 16px; }
+.pfield { height: 36px; }
+#home.searching .pfield.focus { height: 48px; }
+.pf-dot { margin: 0 6px 0 15px; }
+.pf-in { font-size: 16px; font-weight: 500; }
+.pf-linker { left: 35px; top: 40px; }
+.sform.both .pf-linker { height: 31px; }
+.sopts { margin-top: 16px; }
+.pill { height: 28px; padding: 0 12px; font-size: 16px; font-weight: 500; letter-spacing: -0.4px; }
+.pill .ji { width: 16px; height: 16px; }
+.opt-badge { width: 20px; height: 20px; top: -6px; right: -8px; font-size: 12px; line-height: 20px; }
+.pf-right { width: 31px; height: 48px; margin-right: 4px; }
+.pf-right .ji, .pf-right.gps .ji { width: 20px; height: 20px; }
+
+/* ---------- dolne menu: 73 dp, ikona 24, podpis 14 */
+.bmenu button { padding-top: 10px; }
+.bm-ic { width: 24px; height: 24px; }
+.bm-t { font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: -0.3px; margin-top: 6px; }
+.toast { bottom: calc(var(--bm-h) + 16px + var(--safe-b)); }
+
+/* ---------- „Twoje trasy”: zwinięte 115 dp, wiersze 64 dp, rozwinięte z datami i krzyżykiem */
+.bsheet { top: calc(100% - 115px); }
+.bs-head { height: 52px; padding: 0 16px; align-items: flex-end; }
+.bs-grab { top: 20px; }
+.bs-title { font-size: 20px; line-height: 26px; letter-spacing: -0.6px; }
+.bsheet.open .bs-head { height: 64px; padding-bottom: 6px; }
+.bsheet.open .bs-title { transform: none; }
+.bsheet.open .bs-close { opacity: 1; visibility: visible; width: 20px; height: 20px; margin-bottom: 3px; }
+.hist-row { min-height: 64px; padding: 10px 16px 10px 18px; gap: 8px; border-bottom: 0; }
+.hist-row .rf-line { height: 18px; }
+.hist-names { gap: 10px; }
+.hist-names span { font-size: 16px; font-weight: 500; letter-spacing: -0.4px; }
+.hist-go { display: none; }
+.hist-date { font-size: 14px; font-weight: 500; color: var(--ink-2); padding: 16px 16px 2px; }
+.bsheet:not(.open) .hist-date { display: none; }
+.hist-empty { margin-top: 10px; }
+
+/* ---------- podpowiedzi: wiersze 54 dp, kreski na całą szerokość */
+.sg-row + .sg-row::before { left: 0; right: 0; }
+.sg-name { font-size: 16px; font-weight: 500; }
+.upoint { font-size: 14px; }
+.upoint .up-ic { background: var(--soft); color: var(--ink); }
+
+/* ---------- wyniki: pasek 56 dp, nagłówek punktów 82 dp, karty 88 dp na czarnym tle */
+#plan .hdr, #route .hdr { height: 56px; }
+.rform { height: 82px; padding: 0 16px 0 10px; }
+.rf-icons { width: 24px; margin-right: 6px; }
+.rf-name { font-weight: 500; }
+.rform .opt-badge { top: -6px; right: -6px; }
+.results { padding: 10px 12px 96px; }
+.rcard { min-height: 88px; padding: 16px 20px; border-radius: 12px; }
+.rc-dep { width: 95px; }
+.rc-num { font-size: 46px; line-height: 50px; }
+.rc-total { font-size: 13px; font-weight: 500; }
+.lbtn { background: var(--card); border-color: var(--line); }
+
+/* przycisk biletów: okrągły żółty + etykieta jak „Kup bilet · 3,00 zł” */
+.fab-row { right: 16px; bottom: calc(16px + var(--safe-b)); display: flex; align-items: center; gap: 8px; }
+.fab-label { pointer-events: none; background: #191919; color: #f6f6f6; font-size: 13px; font-weight: 600; letter-spacing: -0.2px; padding: 6px 10px; border-radius: var(--r-m); }
+.tix-fab { width: 52px; height: 52px; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+.tix-fab .ji { width: 22px; height: 22px; }
+
+/* ---------- szczegóły trasy: mapa po lewej, panel z prawej z trzema położeniami (przesuwany) */
+.side-wrap { transform: translateX(var(--sx, 0px)); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.side-wrap.dragging { transition: none; }
+.side-wrap.collapsed { transform: translateX(var(--sx, 0px)); }
+.side-handle { touch-action: none; cursor: grab; }
+
+/* ---------- Rozkłady: tytuł po lewej, pole 48 dp, zakładki 14 */
+.lsearch { height: 48px; margin: 8px 16px 0; border-radius: var(--r-m); }
+.lsearch input { font-size: 16px; }
+.ls-ic { width: 16px; height: 16px; }
+.vtab { height: 48px; font-size: 15px; font-weight: 500; gap: 8px; }
+.vtab .ji { width: 18px; height: 18px; }
+
+/* ---------- Konto: pasek 47 dp z kreską, sekcje 20 sp, wiersze 56 dp */
+.sheet-screen .phdr { height: calc(47px + var(--safe-t)); border-bottom: 1px solid var(--line); }
+.acc-sec { font-size: 20px; padding: 24px 16px 10px; }
+.acc-row { min-height: 56px; padding: 0 16px; font-size: 16px; }
+.acc-city { margin: 16px 16px 4px; width: calc(100% - 32px); }
+.acc-opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 0 20px; font-size: 16px; font-weight: 500; }
+.acc-opt .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line-2); flex: none; }
+.acc-opt.on .radio { border: 6px solid var(--yellow); }
+
+/* ---------- Bilety: zakładki Sklep / Twoje bilety */
+.tk-tabs { display: flex; height: 48px; border-bottom: 1px solid var(--line); }
+.tk-tab { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; letter-spacing: -0.4px; color: var(--tab-off); position: relative; }
+.tk-tab.on { color: var(--yellow); }
+.tk-tab.on::after { content: ""; position: absolute; left: 50%; bottom: -1px; width: 132px; margin-left: -66px; height: 3px; border-radius: 2px 2px 0 0; background: var(--yellow); }
+.tk-page { padding-bottom: 24px; }
+.tk-switch { display: flex; width: 208px; height: 42px; margin: 28px auto 0; padding: 4px; border-radius: 360px; background: var(--line); }
+.tk-switch button { flex: 1; border-radius: 360px; font-size: 16px; font-weight: 500; letter-spacing: -0.4px; text-align: center; transition: background .2s; }
+.tk-switch button.on { background: var(--card); }
+.tk-sec { padding-bottom: 32px; }
+.tk-sec + .tk-sec, .tk-ops { border-top: 8px solid var(--tk-sep); }
+.tk-cat { font-size: 24px; font-weight: 700; letter-spacing: -0.9px; line-height: 31px; padding: 24px 16px 16px; }
+.tk-sec:first-of-type .tk-cat { padding-top: 24px; }
+.tk-row { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none; }
+.tk-row::-webkit-scrollbar { display: none; }
+
+/* karta biletu w sklepie: góra (granat) z paskiem rodzaju, dół z ceną albo „Wybierz bilet” */
+.tk-card { position: relative; flex: none; width: 159px; height: 309px; scroll-snap-align: start; text-align: center; cursor: pointer; }
+.tk-card:active { transform: scale(.98); transition: transform .12s; }
+.tk-face { position: absolute; left: 2px; right: 2px; top: 2px; height: 222px; z-index: 1; border-radius: 12px; background: var(--tk-face); color: #f6f6f6; padding: 4px; display: flex; flex-direction: column; align-items: center; }
+.tk-band { align-self: stretch; height: 14px; border-radius: 3px; background: var(--yellow); color: #303030; font-size: 8px; font-weight: 700; letter-spacing: 3.4px; line-height: 14px; text-indent: 3.4px; }
+.tk-band.n { background: var(--tk-band-n); color: var(--tk-op); }
+.tk-op { margin-top: 12px; font-size: 13px; line-height: 16px; color: var(--tk-op); }
+.tk-desc { margin: 24px 10px 0; font-size: 13.5px; line-height: 16px; }
+.tk-desc.small { margin-top: 20px; }
+.tk-kind { margin-top: auto; margin-bottom: 52px; font-size: 13.5px; font-weight: 700; }
+.tk-big { font-size: 60px; font-weight: 600; letter-spacing: -2.5px; line-height: 64px; margin-top: 6px; }
+.tk-big.txt { font-size: 66px; letter-spacing: -3px; margin-top: 10px; }
+.tk-unit { font-size: 13.5px; line-height: 16px; margin: 2px 10px 0; }
+.tk-name { margin-top: 24px; font-size: 13px; line-height: 16px; text-transform: uppercase; }
+.tk-box { position: absolute; left: 4px; right: 4px; top: 200px; bottom: 4px; border: 2px solid var(--tk-box-line); border-radius: 0 0 16px 16px; background: var(--tk-box);
+  display: flex; align-items: flex-end; padding: 0 14px 14px; color: var(--ink); }
+.tk-price { font-size: 32px; font-weight: 700; letter-spacing: -1.2px; line-height: 40px; }
+.tk-price small { font-size: 15px; font-weight: 700; letter-spacing: 0; margin-left: 4px; }
+.tk-price.none { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; line-height: 16px; color: var(--ink-2); text-align: left; padding-bottom: 4px; }
+.tk-pick { width: 100%; height: 40px; margin: 0 -6px -6px; border-radius: 10px; background: var(--tk-btn); color: var(--ink); font-size: 16px; font-weight: 600; letter-spacing: -0.4px; display: flex; align-items: center; justify-content: center; }
+
+/* przewoźnicy pod kategoriami */
+.tk-ops { margin-top: 0; }
+.tk-oprow { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px; text-align: left; }
+.tk-oprow + .tk-oprow { border-top: 8px solid var(--tk-sep); }
+.tk-oprow .grow { flex: 1; min-width: 0; }
+.tk-oprow b { display: block; font-size: 20px; font-weight: 600; letter-spacing: -0.6px; line-height: 26px; }
+.tk-oprow small { display: block; font-size: 14px; line-height: 19px; color: var(--ink-2); margin-top: 2px; }
+.tk-oprow .chev { width: 20px; height: 20px; flex: none; }
+
+/* Twoje bilety — pusty stan (aplikacja nie sprzedaje i nie pokazuje biletów) */
+.tk-empty { text-align: center; padding: 72px 32px 24px; }
+.tk-empty .ic-wrap { width: 72px; height: 72px; margin: 0 auto 20px; border-radius: 50%; background: var(--soft); display: flex; align-items: center; justify-content: center; color: var(--ink-2); }
+.tk-empty .ic-wrap .ji { width: 36px; height: 36px; }
+.tk-empty b { display: block; font-size: 20px; font-weight: 700; letter-spacing: -0.6px; }
+.tk-empty p { color: var(--ink-2); font-size: 15px; line-height: 21px; margin: 10px 0 24px; }
+.tk-empty .ybtn { width: auto; display: inline-flex; padding: 0 28px; height: 48px; font-size: 16px; }
+
+/* szczegóły biletu ze sklepu */
+.tk-detail { background: var(--bg); }
+.tk-detail .phdr { border-bottom: 0; background: var(--bg); }
+.tk-hero { display: flex; justify-content: center; padding: 8px 0 28px; }
+.tk-hero .tk-card { transform: scale(.82); transform-origin: top center; margin-bottom: -56px; cursor: default; }
+.tk-info { background: var(--card); padding: 20px 16px 24px; font-size: 14px; line-height: 20px; }
+.tk-info dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 16px 0 0; }
+.tk-info dt { color: var(--ink-2); }
+.tk-info dd { margin: 0; }
+.tk-buy { flex: none; background: var(--card); border-top: 1px solid var(--line); padding: 12px 16px calc(16px + var(--safe-b)); }
+.tk-buy .note { font-size: 12px; line-height: 16px; color: var(--ink-2); text-align: center; margin-bottom: 12px; }
+.tk-buy .ybtn { font-size: 16px; gap: 8px; }
+.tk-buy .ybtn .ji { width: 16px; height: 16px; }
+
+/* linki wyglądające jak wiersze/przyciski */
+a.tk-oprow, a.ybtn { color: inherit; text-decoration: none; }
+a.ybtn { color: #303030; }
+
+/* poprawki po porównaniu z telefonem */
+.hdr.app-left .hdr-title.brand-word { font-size: 20px; }
+.hdr-btn[data-account] .ji { width: 20px; height: 20px; }
+.tk-band.dash { background: var(--tk-band-n); display: flex; align-items: center; justify-content: center; }
+.tk-band.dash::before { content: ""; width: 16px; height: 2px; border-radius: 1px; background: var(--tk-op); }
+.tk-pick { width: calc(100% + 20px); height: 36px; margin: 0 -10px -10px; }
+.tk-hero { padding: 46px 0 22px; }
+.tk-hero .tk-card { transform: none; margin-bottom: 0; }
+/* Bilety: pasek z tytułem i zakładkami przewija się razem z treścią (jak w aplikacji) */
+#tickets { overflow-y: auto; overscroll-behavior: contain; }
+#tickets .nav-top { position: relative; }
+#tickets #ticketsBody { flex: none; overflow: visible; min-height: calc(100% - 102px); padding-bottom: calc(var(--bm-h) + 24px + var(--safe-b)); }
+#tickets .tab-scroll { margin-bottom: 0; }
+/* Konto: mały awatar, przełącznik jak na Androidzie (Material 3) */
+.acc-ava { width: 28px; height: 28px; border-width: 1.5px; }
+.acc-ava .ji { width: 16px; height: 16px; }
+.acc-row.user { min-height: 56px; font-weight: 500; }
+.switch { width: 52px; height: 32px; border: 2px solid var(--line-2); background: transparent; }
+.switch::after { left: 6px; top: 6px; width: 16px; height: 16px; background: var(--line-2); box-shadow: none; }
+.switch.on { background: var(--ink); border-color: var(--ink); }
+.switch.on::after { left: 2px; top: 2px; width: 24px; height: 24px; transform: translateX(20px); background: var(--card); }
+
+/* kolory kolejnych odcinków trasy (paleta --line-1…8 ze strony, tu jako --leg-1…8; w aplikacji: 1. zielony, 2. niebieski…) */
+:root { --leg-1: #0a9f6a; --leg-2: #00acf0; --leg-3: #6f30f2; --leg-4: #dc7f70; --leg-5: #ec6a7b; --leg-6: #558b6e; --leg-7: #7a6263; --leg-8: #dca953; }
+:root[data-theme="dark"] { --leg-1: #19aa76; --leg-2: #24aee4; --leg-3: #9d73f4; --leg-4: #e38879; --leg-5: #f17384; --leg-6: #60987a; --leg-7: #8d7374; --leg-8: #e7ae4d; }
+.shine .rc-num, .shine .rc-unit { -webkit-mask-image: none; mask-image: none; animation: none; }
+.fab-label { background: #000; box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+
+.hist-row .rf-icons { width: 12px; margin-right: 0; }
+.bsheet.open .hist-row { padding-left: 26px; }

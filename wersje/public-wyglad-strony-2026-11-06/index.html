@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#282641">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Trasa — planer podróży</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/Manrope-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/Manrope-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script>
+    // Na szerokim ekranie komputera otwórz podgląd w ramce telefonu (wyłącz: ?app=1)
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var wide = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+      if (wide && window.top === window && !q.has('app') && !q.has('embed')) location.replace('/dev');
+    })();
+  </script>
+</head>
+<body data-screen="home">
+<div id="app">
+  <div id="map"></div>
+
+  <!-- TRASA: nagłówek, tryb miasto/PKP, pola Skąd/Dokąd, godzina i opcje, „Twoje trasy” -->
+  <section id="home" class="screen active">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"><button class="hdr-btn" id="homeBack" aria-label="Wróć" hidden></button></div>
+        <h1 class="hdr-title brand-word">trasa</h1>
+        <div class="hdr-side right"><button class="hdr-btn" data-account aria-label="Konto"></button></div>
+      </header>
+      <div class="mode-tabs" role="tablist">
+        <button class="mode-tab on" role="tab" id="cityBtn"><span class="mt-ic" data-ji="city-small"></span><span id="cityName">…</span><span class="mt-arrow" data-ji="arrow-down-short"></span></button>
+        <button class="mode-tab" role="tab" id="pkpBtn"><span class="mt-ic" data-ji="long-distance-train"></span><span>PKP</span></button>
+        <span class="mode-ind"></span>
+      </div>
+      <div class="sform">
+        <div class="pfield" id="fFrom">
+          <span class="pf-dot from" data-ji="point"></span>
+          <input class="pf-in" id="inFrom" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Skąd jedziemy?">
+          <button class="pf-right" id="rFrom" tabindex="-1"></button>
+        </div>
+        <div class="pf-linker"></div>
+        <div class="pfield" id="fTo">
+          <span class="pf-dot to" data-ji="point"></span>
+          <input class="pf-in" id="inTo" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" placeholder="Dokąd jedziemy?">
+          <button class="pf-right" id="rTo" tabindex="-1"></button>
+        </div>
+        <div class="sopts">
+          <button class="pill" id="hTime"></button>
+          <div class="pill-wrap"><button class="pill" id="hOpts"></button><span class="opt-badge" id="hOptsBadge" hidden></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <div class="suggest scroll" id="suggest" hidden></div>
+      <div class="go-wrap" id="goWrap" hidden><button class="go-btn" id="goBtn"><span>Pokaż trasy</span><span class="go-arrow" data-ji="arrow-left"></span></button></div>
+      <div class="bsheet" id="histSheet">
+        <button class="bs-head" id="histHead" aria-label="Twoje trasy">
+          <span class="bs-grab"></span>
+          <span class="bs-title">Twoje trasy</span>
+          <span class="bs-close" data-ji="close"></span>
+        </button>
+        <div class="bs-content scroll" id="histBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WYNIKI -->
+  <section id="plan" class="screen">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"><button class="hdr-btn" data-back aria-label="Wróć"></button></div>
+        <h1 class="hdr-title"></h1>
+        <div class="hdr-side right"></div>
+      </header>
+      <div class="rform">
+        <button class="rf-points" id="rfEdit">
+          <span class="rf-icons"><span class="rf-dot from" data-ji="point"></span><span class="rf-line"></span><span class="rf-dot to" data-ji="point"></span></span>
+          <span class="rf-names"><span class="rf-name" id="rfFrom"></span><span class="rf-name" id="rfTo"></span></span>
+        </button>
+        <div class="pill-wrap"><button class="round-btn" id="optsBtn" aria-label="Opcje"></button><span class="opt-badge" id="optsBadge" hidden></span></div>
+      </div>
+    </div>
+    <div class="results scroll" id="results"></div>
+    <div class="fab-row"><button class="tix-fab" data-tickets><span data-ji="shopping-cart"></span>Bilety</button></div>
+  </section>
+
+  <!-- SZCZEGÓŁY TRASY: podsumowanie u góry, mapa z lewej, panel z osią czasu -->
+  <section id="route" class="screen map-screen">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"><button class="hdr-btn" data-back aria-label="Wróć"></button></div>
+        <h1 class="hdr-title"></h1>
+        <div class="hdr-side right"><button class="hdr-btn" id="routeSave" aria-label="Zapisz trasę"></button></div>
+      </header>
+    </div>
+    <div class="route-top" id="routeTop"></div>
+    <div class="side-wrap" id="sideWrap">
+      <button class="side-handle" id="sideHandle" aria-label="Pokaż mapę"><span></span></button>
+      <div class="side-sheet scroll" id="routeBody"></div>
+    </div>
+    <button class="map-gps" id="routeGps" aria-label="Moja lokalizacja"></button>
+    <div class="fab-row"><button class="tix-fab" data-tickets><span data-ji="shopping-cart"></span>Bilety</button></div>
+  </section>
+
+  <!-- ROZKŁADY -->
+  <section id="lines" class="screen">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"></div>
+        <h1 class="hdr-title">Rozkłady</h1>
+        <div class="hdr-side right"><button class="hdr-btn" data-account aria-label="Konto"></button></div>
+      </header>
+      <div class="lsearch"><span class="ls-ic" data-ji="search"></span><input id="linesInput" type="search" autocomplete="off" placeholder="Wyszukaj linię..."></div>
+      <div class="vtabs" id="vtabs"></div>
+    </div>
+    <div class="scroll tab-scroll" id="linesBody"></div>
+  </section>
+
+  <!-- LINIA: mapa + ciemny panel z kierunkiem i przystankami -->
+  <section id="line" class="screen map-screen">
+    <button class="map-back" data-back aria-label="Wróć"></button>
+    <div class="dsheet" id="lineSheet">
+      <div class="ds-grab"></div>
+      <div class="ds-head" id="lineHead"></div>
+      <div class="ds-body scroll" id="lineBody"></div>
+    </div>
+  </section>
+
+  <!-- ODJAZDY Z PRZYSTANKU -->
+  <section id="stop" class="screen">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"><button class="hdr-btn" data-back aria-label="Wróć"></button></div>
+        <h1 class="hdr-title" id="stopTitle">Przystanek</h1>
+        <div class="hdr-side right"></div>
+      </header>
+      <div class="stop-sub" id="stopHead"></div>
+    </div>
+    <div class="scroll tab-scroll" id="stopBody"></div>
+  </section>
+
+  <!-- KURS -->
+  <section id="trip" class="screen map-screen">
+    <button class="map-back" data-back aria-label="Wróć"></button>
+    <div class="dsheet" id="tripSheet">
+      <div class="ds-grab"></div>
+      <div class="ds-head" id="tripHead"></div>
+      <div class="ds-body scroll" id="tripBody"></div>
+    </div>
+  </section>
+
+  <!-- BILETY -->
+  <section id="tickets" class="screen">
+    <div class="nav-top">
+      <header class="hdr">
+        <div class="hdr-side"></div>
+        <h1 class="hdr-title">Bilety</h1>
+        <div class="hdr-side right"><button class="hdr-btn" data-account aria-label="Konto"></button></div>
+      </header>
+    </div>
+    <div class="scroll tab-scroll tickets" id="ticketsBody"></div>
+  </section>
+
+  <!-- KONTO -->
+  <section id="account" class="screen sheet-screen">
+    <header class="phdr">
+      <button class="phdr-btn" data-back aria-label="Zamknij"></button>
+      <h1 class="phdr-title">Konto</h1>
+      <span class="phdr-btn"></span>
+    </header>
+    <div class="scroll" id="accountBody"></div>
+  </section>
+
+  <!-- WYBÓR MIASTA -->
+  <section id="cities" class="screen sheet-screen">
+    <header class="phdr">
+      <button class="phdr-btn" data-back aria-label="Zamknij"></button>
+      <h1 class="phdr-title">Wybierz miasto</h1>
+      <span class="phdr-btn"></span>
+    </header>
+    <div class="csearch"><span data-ji="buildings"></span><input id="cityInput" type="search" autocomplete="off" placeholder="Znajdź miasto..."></div>
+    <div class="scroll" id="citiesBody"></div>
+  </section>
+
+  <!-- OPCJE -->
+  <section id="options" class="screen sheet-screen">
+    <header class="ohdr">
+      <button class="phdr-btn" data-back aria-label="Zamknij"></button>
+      <button class="o-reset" id="opReset">Resetuj</button>
+    </header>
+    <div class="scroll" id="optionsBody"></div>
+    <div class="o-done"><button class="ybtn" id="opDone">Gotowe</button></div>
+  </section>
+
+  <!-- LOGOWANIE -->
+  <section id="login" class="screen">
+    <div class="nav-top"><header class="hdr"><div class="hdr-side"></div><h1 class="hdr-title brand-word">trasa</h1><div class="hdr-side right"></div></header></div>
+    <div class="login-box">
+      <div class="login-title" id="loginTitle">Zaloguj się</div>
+      <div class="login-sub" id="loginSub"></div>
+      <label class="lbl">Adres serwera<input class="inp" id="lgServer" type="url" inputmode="url" autocomplete="off" placeholder="http://192.168.1.10:3400"></label>
+      <label class="lbl">Login<input class="inp" id="lgLogin" autocomplete="username" value="admin"></label>
+      <label class="lbl">Hasło<input class="inp" id="lgPass" type="password" autocomplete="current-password"></label>
+      <label class="lbl" id="lgPass2Wrap" hidden>Powtórz hasło<input class="inp" id="lgPass2" type="password" autocomplete="new-password"></label>
+      <div class="login-err" id="lgErr"></div>
+      <button class="ybtn" id="lgOk">Zaloguj</button>
+    </div>
+  </section>
+
+  <!-- WYBÓR NA MAPIE -->
+  <section id="mappick" class="screen map-screen">
+    <button class="map-back" data-back aria-label="Wróć"></button>
+    <div class="float-label">Przesuń mapę, aby wskazać miejsce</div>
+    <div class="center-pin" data-ji="address"></div>
+    <div class="mp-sheet">
+      <div class="mp-name" id="mpName">…</div>
+      <div class="mp-sub" id="mpSub"></div>
+      <button class="ybtn" id="mpOk">Wybierz to miejsce</button>
+    </div>
+  </section>
+
+  <nav class="bmenu" role="menu">
+    <button data-tab="home" role="menuitem"><span class="bm-ic" data-ji="navigation"></span><span class="bm-t">Trasa</span></button>
+    <button data-tab="lines" role="menuitem"><span class="bm-ic" data-ji="schedule"></span><span class="bm-t">Rozkłady</span></button>
+    <button data-tab="tickets" role="menuitem"><span class="bm-ic" data-ji="ticket-fill"></span><span class="bm-t">Bilety</span></button>
+  </nav>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-back"></div>
+    <div class="modal-sheet" id="modalSheet"></div>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <div class="boot" id="boot"><div class="brand-word boot-word">trasa</div><div class="boot-msg" id="bootMsg">Ładowanie…</div></div>
+</div>
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script type="module" src="/js/debug.js"></script>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

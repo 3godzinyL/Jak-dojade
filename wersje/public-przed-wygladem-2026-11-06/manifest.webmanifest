@@ -1,0 +1,9 @@
+{
+  "name": "Trasa — planer podróży",
+  "short_name": "Trasa",
+  "start_url": "/?app=1",
+  "display": "standalone",
+  "background_color": "#0b5fd0",
+  "theme_color": "#0b5fd0",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

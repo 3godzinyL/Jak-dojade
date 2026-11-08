@@ -1,0 +1,202 @@
+/* Poprawki wg nagrania aplikacji (08.11.2026, Xiaomi 1080×2400 → 392 dp szerokości).
+   Ładowany po app-phone.css. Wymiary w dp = px CSS. */
+
+/* ---------- znak aplikacji: ten sam rysunek co ikona na pulpicie */
+.boot-mark { width: 84px; height: 84px; color: #fff; display: flex; }
+.boot-mark .ji { width: 84px; height: 84px; }
+#login .hdr-title.brand-word { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- Trasa / PKP: wskaźnik zakładki, szara nazwa miasta bez strzałki w trybie PKP */
+.mode-tabs.pkp .mode-ind { transform: translateX(100%); }
+.mode-tabs.pkp #cityBtn .mt-arrow { display: none; }
+
+/* ---------- aktywne pole: mikrofon + GPS (puste) albo ✕ (z tekstem) */
+.pf-mic { width: 31px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--ink); flex: none; }
+.pf-mic[hidden] { display: none; }
+.pf-mic .ic { width: 20px; height: 20px; fill: currentColor; }
+.pf-mic.on { color: #e53935; animation: micPulse 1s ease-in-out infinite; }
+@keyframes micPulse { 50% { opacity: .45; } }
+
+/* ---------- skróty miejsc: zapisane (np. Szkoła) + Edytuj */
+.upoints { justify-content: center; gap: 8px; padding: 18px 8px 14px; }
+.upoint { width: 96px; }
+.upoint .up-ic .ic { width: 18px; height: 18px; fill: currentColor; }
+.upoint.edit { color: var(--ink); }
+.upoint.edit .up-ic { background: none; }
+.upoint.edit .up-ic .ic { width: 20px; height: 20px; }
+.upe-list { padding: 4px 0 8px; }
+.upe-row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 20px; }
+.upe-row .up-ic { width: 36px; height: 36px; border-radius: 50%; background: var(--soft); display: flex; align-items: center; justify-content: center; flex: none; }
+.upe-row .up-ic .ji, .upe-row .up-ic .ic { width: 18px; height: 18px; fill: currentColor; }
+.upe-row .grow { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; }
+.upe-row small { display: block; font-size: 13px; font-weight: 500; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tbtn.sm { width: auto; height: 36px; padding: 0 14px; border-radius: 360px; background: var(--soft); font-size: 14px; }
+.acc-opt .ji, .acc-opt .ic { width: 20px; height: 20px; fill: currentColor; }
+
+/* ---------- REKLAMA: pasek z napisem + kreacja (duży baner 6:5 na starcie, jak 300×250) */
+.ad-label { height: 33px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; letter-spacing: 3px;
+  color: var(--ink-2); background: var(--home-bg); text-indent: 3px; }
+.ad-label.left { justify-content: flex-start; height: 24px; padding: 0 16px; background: none; font-size: 9px; letter-spacing: 2px; }
+.ad-slot { position: relative; cursor: pointer; }
+.ad-home { flex: none; }
+#home.searching .ad-home { display: none; }
+.ad-body { position: relative; }
+.ad-choice { position: absolute; right: 4px; top: 4px; width: 18px; height: 18px; border-radius: 3px; background: rgba(255, 255, 255, .85); color: #2f80ed; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.ad-choice .ic { width: 12px; height: 12px; fill: currentColor; }
+
+.adc { position: relative; overflow: hidden; container-type: inline-size; color: #fff; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 7%; }
+.adc.big { aspect-ratio: 6 / 5; height: auto; }
+.adc-mark { position: absolute; left: 6cqw; top: 6cqw; display: flex; align-items: center; gap: 1.6cqw; font-size: 5cqw; letter-spacing: -.04em; }
+.adc-mark .ji { width: 6.5cqw; height: 6.5cqw; }
+.adc-mark b { font-weight: 600; }
+.adc-head { font-size: 9.4cqw; font-weight: 700; line-height: 1.08; letter-spacing: -.04em; margin-top: 8cqw; }
+.adc-cta { position: absolute; right: 6cqw; bottom: 7cqw; background: var(--yellow); color: #303030; font-weight: 700; font-size: 5cqw; padding: 1.2cqw 3cqw; border-radius: 1.4cqw; }
+.adc-tickets { background: radial-gradient(circle at 88% 18%, #ffd442 0 7%, transparent 7.4%), linear-gradient(135deg, #3d3a6b 0%, #282641 55%, #15142a 100%); }
+.adc-lines { background: linear-gradient(140deg, #19aa76 0%, #0a7a52 60%, #064e36 100%); }
+.adc-tiles { display: flex; gap: 2.4cqw; margin-top: 6cqw; }
+.adc-tiles i { font-style: normal; font-weight: 700; font-size: 5.4cqw; border: .5cqw solid rgba(255, 255, 255, .85); border-radius: 1.4cqw; padding: .6cqw 2.2cqw; }
+
+/* „wideo”: jadący autobus na drodze, pauza zatrzymuje animację */
+.adc-video { background: linear-gradient(#1d2b4a 0%, #3b5b8c 55%, #6c8fbf 100%); justify-content: flex-start; padding-top: 6cqw; }
+.adc-video .adc-head { margin-top: 0; font-size: 8.5cqw; }
+.adv-road { position: absolute; left: 0; right: 0; bottom: 0; height: 26%; background: #2b2b2b; }
+.adv-road::after { content: ""; position: absolute; left: 0; right: 0; top: 46%; height: 1.2cqw; background: repeating-linear-gradient(90deg, #d9d9d9 0 6cqw, transparent 6cqw 12cqw); animation: advRoad 1.2s linear infinite; }
+.adv-bus { position: absolute; bottom: 14%; left: -40%; width: 36%; height: 15%; border-radius: 2cqw; background: #ffd442;
+  box-shadow: inset 3cqw 2cqw 0 -1.4cqw #1b1b1b, inset 10cqw 2cqw 0 -1.4cqw #1b1b1b, inset 17cqw 2cqw 0 -1.4cqw #1b1b1b; animation: advBus 6s linear infinite; }
+.adv-bus::before, .adv-bus::after { content: ""; position: absolute; bottom: -2.4cqw; width: 4.6cqw; height: 4.6cqw; border-radius: 50%; background: #1b1b1b; border: 1cqw solid #555; }
+.adv-bus::before { left: 12%; }
+.adv-bus::after { right: 12%; }
+@keyframes advBus { to { left: 104%; } }
+@keyframes advRoad { to { background-position: -12cqw 0; } }
+.adc-video.paused .adv-bus, .adc-video.paused .adv-road::after { animation-play-state: paused; }
+.adv-ctl { position: absolute; left: 4cqw; top: auto; bottom: 30%; display: flex; gap: 2cqw; align-items: center; }
+.adv-pause { width: 7cqw; height: 7cqw; border-radius: 50%; background: rgba(0, 0, 0, .45); position: relative; }
+.adv-pause::before, .adv-pause::after { content: ""; position: absolute; top: 28%; width: 1.2cqw; height: 44%; background: #fff; }
+.adv-pause::before { left: 34%; }
+.adv-pause::after { right: 34%; }
+.adc-video.paused .adv-pause::before { left: 38%; width: 0; height: 0; background: none; border-left: 2.6cqw solid #fff; border-top: 1.6cqw solid transparent; border-bottom: 1.6cqw solid transparent; }
+.adc-video.paused .adv-pause::after { display: none; }
+.adv-mute { width: 7cqw; height: 7cqw; border-radius: 50%; background: rgba(0, 0, 0, .45); display: flex; align-items: center; justify-content: center; }
+.adv-mute .ji, .adv-mute .ic { width: 3.4cqw; height: 3.4cqw; fill: #fff; color: #fff; }
+
+/* wiersz natywny w podpowiedziach */
+.ad-native { background: var(--card); margin-bottom: 8px; cursor: pointer; }
+.adn { display: flex; align-items: center; gap: 12px; padding: 0 0 12px 16px; }
+.adn-txt { flex: 1; min-width: 0; }
+.adn-txt b { display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+.adn-txt small { display: block; font-size: 12px; color: var(--cobalt); font-weight: 600; }
+.adn-thumb { width: 96px; height: 40px; border-radius: 4px; overflow: hidden; flex: none; }
+.adn-thumb .adc-head { font-size: 11cqw; margin-top: 10cqw; }
+.adn-fold { width: 36px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--ink-2); flex: none; }
+.adn-fold .ji, .adn-fold .ic { width: 18px; height: 18px; transform: rotate(180deg); transition: transform .2s; }
+.ad-native.folded .adn { display: none; }
+.ad-native.folded .adn-fold .ic { transform: none; }
+
+/* pasek nad wynikami i nad szczegółami trasy (jak reklama instalacji: obraz + nazwa + przycisk) */
+.ad-compact .ad-label { height: 22px; font-size: 9px; letter-spacing: 2.4px; }
+#results .ad-compact { margin: -10px -12px 10px; }
+#results .ad-compact .ad-label { background: var(--bg); }
+.adx { position: relative; display: flex; height: 62px; background: #fff; color: #303030; }
+.adx-art { width: 46%; height: 100%; flex: none; overflow: hidden; }
+.adx-art .adc-head { font-size: 9cqw; margin-top: 0; }
+.adx-art .adc-mark, .adx-art .adc-cta, .adx-art .adc-tiles, .adx-art .adv-ctl { display: none; }
+.adx-side { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 0 10px; }
+.adx-name { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.adx-name .ji { width: 16px; height: 16px; color: #282641; }
+.adx-btn { height: 26px; border-radius: 360px; background: #1f5bd8; color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.route-top .ad-compact .ad-label { background: var(--bg); }
+
+/* ---------- „Kup bilet”: etykieta + żółte kółko; etykieta chowa się przy przewijaniu w dół */
+#plan .fab-row { bottom: calc(16px + var(--safe-b)); }
+.fab-row[hidden] { display: none; }
+.fab-row.buy { z-index: 8; }
+.fab-row.buy .fab-label { pointer-events: auto; cursor: pointer; max-width: 240px; overflow: hidden; white-space: nowrap; font-size: 13px; padding: 7px 10px;
+  transition: max-width .3s ease, opacity .22s ease, padding .3s ease, margin .3s ease; }
+.fab-row.buy.mini .fab-label { max-width: 0; opacity: 0; padding-left: 0; padding-right: 0; margin-right: -8px; }
+.round-more { position: absolute; left: 16px; bottom: calc(16px + var(--safe-b)); z-index: 7; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #303030;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0, 0, 0, .3); }
+.round-more .ic { width: 22px; height: 22px; fill: currentColor; }
+.hdr-side.right.two { width: 88px; justify-content: flex-end; }
+#planMore .ic { width: 22px; height: 22px; fill: currentColor; }
+
+/* ---------- Wybierz miasto: strzałka wstecz, bez kreski, nazwa 19 sp, region pod spodem, ikona biletu z prawej */
+#cities .phdr { border-bottom: 0; }
+#cities .phdr-title { font-size: 18px; }
+#cities .phdr-btn .ji { width: 20px; height: 20px; }
+#cities .csearch { margin: 8px 16px 12px; height: 56px; border-radius: 8px; padding: 0 16px; gap: 14px; }
+#cities .csearch > span { width: 20px; height: 20px; }
+#cities .csearch input { font-size: 18px; }
+.crow { min-height: 65px; padding: 8px 16px 8px 54px; gap: 12px; }
+.crow::after { display: none; }
+.crow .cn { font-size: 19px; font-weight: 500; line-height: 24px; color: var(--ink); }
+.crow .cs { display: block; font-size: 14px; line-height: 18px; font-weight: 500; color: var(--ink-2); }
+.crow.on .cn { color: var(--cobalt); }
+.crow .ccheck { left: 20px; width: 18px; height: 18px; margin-top: -9px; }
+.cico { width: 24px; height: 24px; flex: none; color: var(--ink); display: flex; }
+.cico .ji { width: 24px; height: 24px; }
+
+/* ---------- Konto */
+.acc-sec { font-size: 24px; font-weight: 700; letter-spacing: -0.9px; padding: 28px 16px 12px; }
+.acc-row.user { min-height: 52px; }
+.acc-ava { background: var(--yellow); border-color: #303030; color: #303030; }
+.acc-wallet { display: flex; align-items: center; gap: 16px; margin: 12px 16px 0; height: 86px; padding: 0 16px; border-radius: 16px; cursor: pointer;
+  background: linear-gradient(110deg, #4a4a4c 0%, #595650 45%, #8a7438 100%); color: #f6f6f6; }
+:root:not([data-theme="dark"]) .acc-wallet { background: linear-gradient(110deg, #e9e9eb 0%, #e3dfd3 50%, #f1d98a 100%); color: #303030; }
+.aw-ic .ic { width: 34px; height: 34px; fill: currentColor; }
+.aw-txt { flex: 1; min-width: 0; }
+.aw-txt small { display: block; font-size: 13px; font-weight: 500; }
+.aw-txt b { display: block; font-size: 26px; font-weight: 700; letter-spacing: -1px; line-height: 32px; }
+.aw-btn { height: 44px; padding: 0 18px; border-radius: 10px; background: var(--yellow); color: #303030; font-size: 15px; font-weight: 700; display: flex; align-items: center; }
+.acc-sub { position: relative; margin: 14px 16px 0; padding: 30px 20px 0; border-radius: 14px; background: #000; color: #f6f6f6; text-align: center; display: flex; flex-direction: column; align-items: center; }
+:root:not([data-theme="dark"]) .acc-sub { background: #1f1f1f; }
+.as-star { position: absolute; top: -12px; left: 50%; margin-left: -12px; width: 24px; height: 24px; color: var(--yellow); }
+.as-star .ic { width: 24px; height: 24px; fill: currentColor; }
+.acc-sub b { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.as-sub { font-size: 14px; margin-top: 6px; }
+.acc-sub .ybtn { height: 50px; margin-top: 18px; font-size: 17px; border-radius: 10px; }
+.as-art { display: block; width: calc(100% + 40px); margin: 6px -20px 0; height: auto; }
+.acc-row .grow small { margin-top: 2px; }
+.acc-row.link .grow { color: var(--cobalt); }
+.acc-soc { width: 24px; height: 24px; flex: none; display: flex; }
+.acc-soc svg { width: 24px; height: 24px; }
+.acc-ver { color: var(--ink-2); font-size: 15px; line-height: 22px; padding: 26px 16px calc(36px + var(--safe-b)); }
+.acc-foot { display: none; }
+
+/* ---------- Twoje bilety: data, karta po lewej, szczegóły po prawej */
+.mt-list { display: block; padding: 0 0 calc(24px + var(--safe-b)); }
+.mt-day { font-size: 24px; font-weight: 700; letter-spacing: -0.9px; padding: 24px 16px 14px; }
+.mt-item { display: flex; gap: 16px; padding: 0 16px 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
+.mt-item:last-child { border-bottom: 0; }
+.mt-left { flex: none; width: 150px; text-align: center; }
+.mt-tcard { position: relative; display: flex; flex-direction: column; width: 150px; height: 252px; border-radius: 14px; background: #6a6a6a; padding: 4px; color: #f6f6f6; overflow: hidden; }
+.mt-tface { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; }
+.mt-tcard .tk-band { background: #575757; color: #cfcfcf; }
+.mt-tcard .tk-op { color: #cfcfcf; }
+.mt-tcard .tk-desc { margin-top: 18px; font-size: 13px; }
+.mt-tcard .tk-big { font-size: 56px; line-height: 60px; }
+.mt-tcard .tk-kind { margin-bottom: 14px; }
+.mt-test { position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%) rotate(-22deg); border: 2px solid rgba(255, 92, 92, .9); color: rgba(255, 92, 92, .95);
+  font-size: 12px; font-weight: 800; letter-spacing: 2px; padding: 2px 8px; border-radius: 4px; background: rgba(0, 0, 0, .25); pointer-events: none; }
+.mt-tbtn { flex: none; height: 36px; margin: 6px 2px 2px; border-radius: 8px; background: #262626; color: #bdbdbd; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.mt-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.mt-meta { display: flex; gap: 8px; font-size: 14px; line-height: 19px; }
+.mt-meta .ic { width: 16px; height: 16px; flex: none; margin-top: 2px; fill: currentColor; }
+.mt-again { height: 40px; border-radius: 10px; background: var(--soft); font-size: 15px; font-weight: 700; letter-spacing: -0.3px; margin-top: 4px; }
+.mt-more { align-self: flex-start; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; padding: 4px 0; }
+
+/* szczegóły biletu („Twój bilet”) */
+#ticket .phdr-title { font-size: 16px; font-weight: 700; }
+.mt-dhero { display: flex; justify-content: center; padding: 18px 0 20px; }
+.mt-status { margin: 0 16px; padding: 0 0 18px; border-bottom: 1px solid var(--line); text-align: center; font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+.mt-valid { display: flex; justify-content: space-between; padding: 14px 16px 20px; }
+.mt-valid small { display: block; font-size: 13px; color: var(--ink-2); }
+.mt-valid b { display: block; font-size: 15px; font-weight: 600; margin-top: 2px; }
+.mt-valid .r { text-align: right; }
+.mt-info { background: var(--card); padding: 18px 16px 24px; }
+.mt-desc-t { font-size: 14px; color: var(--ink-2); }
+.mt-desc p { margin: 6px 0 16px; font-size: 15px; line-height: 21px; }
+.mt-kv { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; font-size: 14px; }
+.mt-kv span:first-child { color: var(--ink-2); }
+.mt-kv span:last-child { text-align: right; font-weight: 500; }
+.mt-kv.b span { color: var(--ink); font-size: 16px; font-weight: 700; }
+#ticketBuy .ybtn { margin-top: 4px; }

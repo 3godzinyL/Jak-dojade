@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trasa — podgląd telefonu</title>
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<style>
+  :root { --bg: #e9edf2; --panel: #fff; --ink: #15191e; --ink2: #59626e; --line: #dde2e8; --brand: #0b5fd0; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0c0f13; --panel: #161b22; --ink: #e8ecf1; --ink2: #9aa4b0; --line: #2a313b; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: flex; background: var(--bg); color: var(--ink); font: 14px/1.4 system-ui, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: 16px; gap: 12px; }
+  .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  select, button { font: inherit; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 0 10px; cursor: pointer; }
+  button.on { border-color: var(--brand); color: var(--brand); }
+  .phone-wrap { position: relative; }
+  .phone { border-radius: 38px; background: #111; padding: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.28); transform-origin: top center; }
+  .phone iframe { display: block; border: 0; border-radius: 28px; background: #fff; }
+  .side { width: 380px; flex: none; background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+  .sec { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  h2 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink2); }
+  .qr { display: flex; gap: 12px; align-items: center; }
+  .qr img { width: 120px; height: 120px; background: #fff; padding: 4px; border-radius: 8px; flex: none; }
+  .mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; }
+  .muted { color: var(--ink2); font-size: 12.5px; }
+  .tabs { display: flex; gap: 6px; padding: 10px 16px 0; }
+  .log { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 0; font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; }
+  .log div { padding: 3px 16px; border-bottom: 1px solid var(--line); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .log .err { color: #d32f2f; } .log .warn { color: #b26a00; } .log .ok { color: inherit; }
+  a { color: var(--brand); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="bar">
+    <select id="dev">
+      <option value="412x915">Pixel 7 · 412×915</option>
+      <option value="390x844" selected>iPhone 14 · 390×844</option>
+      <option value="360x800">Galaxy A · 360×800</option>
+      <option value="375x667">iPhone SE · 375×667</option>
+      <option value="430x932">iPhone Pro Max · 430×932</option>
+    </select>
+    <button id="rot">Obróć</button>
+    <button id="reload">Przeładuj</button>
+    <a href="/?app=1" target="_blank">pełne okno ↗</a>
+  </div>
+  <div class="phone-wrap"><div class="phone" id="phone"><iframe id="fr" src="/?embed=1" allow="geolocation"></iframe></div></div>
+  <div class="muted">Mysz = dotyk. Przytrzymanie (prawy klik) na mapie → Stąd/Dotąd. F12 → DevTools działa też w ramce (wybierz kontekst „fr”).</div>
+</div>
+<aside class="side">
+  <div class="sec">
+    <h2>Telefon w tej samej sieci Wi-Fi</h2>
+    <div class="qr"><img id="qr" alt="QR"><div><div class="mono" id="lan">…</div>
+      <div class="muted" style="margin-top:6px">Zeskanuj aparatem. Dopisz <span class="mono">?debug=1</span>, żeby włączyć konsolę na telefonie.</div></div></div>
+  </div>
+  <div class="sec">
+    <h2>Debugowanie z GPS (USB)</h2>
+    <div class="muted">Telefon z Androidem: Opcje programisty → Debugowanie USB. Na komputerze w Chrome: <span class="mono">chrome://inspect</span> → Port forwarding → <span class="mono"><span class="port">3400</span> → localhost:<span class="port">3400</span></span>. Na telefonie otwórz <span class="mono">http://localhost:<span class="port">3400</span></span> — lokalizacja działa, a w chrome://inspect masz pełne DevTools telefonu.</div>
+  </div>
+  <div class="sec mono" id="srv">…</div>
+  <div class="tabs"><button id="tNet" class="on">Sieć</button><button id="tCon">Konsola</button><button id="clr">Wyczyść</button></div>
+  <div class="log" id="log"></div>
+</aside>
+<script>
+  const fr = document.getElementById('fr');
+  const phone = document.getElementById('phone');
+  let rot = false, tab = 'net';
+  const logs = { net: [], con: [] };
+
+  function size() {
+    let [w, h] = document.getElementById('dev').value.split('x').map(Number);
+    if (rot) [w, h] = [h, w];
+    fr.style.width = w + 'px';
+    fr.style.height = h + 'px';
+    const availH = window.innerHeight - 110, availW = document.querySelector('.stage').clientWidth - 32;
+    const s = Math.min(1, availH / (h + 24), availW / (w + 24));
+    phone.style.transform = `scale(${s})`;
+    phone.parentElement.style.height = (h + 24) * s + 'px';
+    phone.parentElement.style.width = (w + 24) * s + 'px';
+  }
+  document.getElementById('dev').onchange = size;
+  document.getElementById('rot').onclick = () => { rot = !rot; size(); };
+  document.getElementById('reload').onclick = () => fr.contentWindow.location.reload();
+  window.addEventListener('resize', size);
+  size();
+
+  function push(kind, cls, text) {
+    const t = new Date().toLocaleTimeString('pl-PL');
+    logs[kind].push({ cls, text: t + '  ' + text });
+    if (logs[kind].length > 400) logs[kind].shift();
+    if (tab === kind) render();
+  }
+  function render() {
+    const el = document.getElementById('log');
+    el.innerHTML = logs[tab].map((l) => `<div class="${l.cls}">${l.text.replace(/[&<]/g, (c) => (c === '&' ? '&amp;' : '&lt;'))}</div>`).join('');
+    el.scrollTop = el.scrollHeight;
+  }
+  document.getElementById('tNet').onclick = () => { tab = 'net'; document.getElementById('tNet').classList.add('on'); document.getElementById('tCon').classList.remove('on'); render(); };
+  document.getElementById('tCon').onclick = () => { tab = 'con'; document.getElementById('tCon').classList.add('on'); document.getElementById('tNet').classList.remove('on'); render(); };
+  document.getElementById('clr').onclick = () => { logs[tab] = []; render(); };
+
+  fr.addEventListener('load', () => {
+    const w = fr.contentWindow;
+    w.addEventListener('trasa:api', (e) => {
+      const d = e.detail;
+      push('net', d.error ? 'err' : 'ok', `${d.method} ${decodeURIComponent(d.path)}  →  ${d.status} · ${d.ms} ms${d.size ? ' · ' + (d.size / 1024).toFixed(1) + ' kB' : ''}${d.error ? ' · ' + d.error : ''}`);
+    });
+    for (const level of ['log', 'info', 'warn', 'error']) {
+      const orig = w.console[level].bind(w.console);
+      w.console[level] = (...a) => {
+        orig(...a);
+        push('con', level === 'error' ? 'err' : level === 'warn' ? 'warn' : 'ok', level.toUpperCase() + '  ' + a.map((x) => (x && x.stack) || (typeof x === 'object' ? JSON.stringify(x) : String(x))).join(' '));
+      };
+    }
+    w.addEventListener('error', (e) => push('con', 'err', `ERROR  ${e.message} @ ${(e.filename || '').split('/').pop()}:${e.lineno}`));
+    push('con', 'ok', 'załadowano ' + w.location.pathname + w.location.search);
+  });
+
+  fetch('/api/dev/info').then((r) => r.json()).then((d) => {
+    const url = d.lan[0] ? d.lan[0].url : location.origin;
+    document.getElementById('lan').innerHTML = d.lan.map((l) => `${l.url} <span class="muted">(${l.iface})</span>`).join('<br>') || 'brak sieci LAN';
+    document.getElementById('qr').src = '/api/dev/qr.svg?text=' + encodeURIComponent(url);
+    document.querySelectorAll('.port').forEach((el) => { el.textContent = d.port; });
+    const off = d.clockOffset;
+    document.getElementById('srv').innerHTML = `Serwer: Node ${d.node} · RAM ${d.rssMB} MB · port ${d.port}<br>Zegar: ${Math.abs(off) > 60000 ? `komputer różni się od sieci o ${(off / 60000).toFixed(1)} min → aplikacja używa czasu z ${d.clockSource}` : 'zgodny z siecią'}`;
+  });
+</script>
+</body>
+</html>
